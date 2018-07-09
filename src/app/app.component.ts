@@ -15,25 +15,43 @@ export class AppComponent implements OnInit {
   constructor(private store: Store) {}
 
   ngOnInit() {
-    const inputs = new Map();
-    const outputs = new Map();
+    const aInputs = new Map();
+    const aOutputs = new Map();
+    const bInputs = new Map();
+    const bOutputs = new Map();
     for ( let i = 0; i < 10; i ++) {
-      inputs.set(`input ${i}`, new Socket(i));
-      outputs.set(`output ${i}`, new Socket(i));
+      aInputs.set(`input ${i}`, new Socket(i));
+      aOutputs.set(`output ${i}`, new Socket(i));
+
+      bInputs.set(`input ${i}`, new Socket(i));
+      bOutputs.set(`output ${i}`, new Socket(i));
     }
-    const node = new Node('test', inputs, outputs, ({value, key, context}) => {
+
+    const nodeA = new Node('nodeA', aInputs, aOutputs, ({value, key, context}) => {
       const number = Number(key.match(/\d+/g)[0]);
       const next = context.node.outputs.get(`output ${number}`);
       next.next(value + 1);
     });
 
+    const nodeB = new Node('nodeB', bInputs, bOutputs, ({value, key, context}) => {
+      const number = Number(key.match(/\d+/g)[0]);
+      const next = context.node.outputs.get(`output ${number}`);
+      next.next(value - 1);
+    });
+
+    for ( let i = 0; i < 10; i ++) {
+      nodeA.connect(`output ${i}`, nodeB, `input ${i}`);
+    }
+
+
     setInterval(() => {
       const number = getRandomInt(10);
-      const input = node.inputs.get(`input ${number}`);
+      const input = nodeA.inputs.get(`input ${number}`);
       input.next(getRandomInt(100));
     }, 200);
 
-    this.store.dispatch(new AddNode(node));
+    this.store.dispatch(new AddNode(nodeA));
+    this.store.dispatch(new AddNode(nodeB));
   }
 }
 
