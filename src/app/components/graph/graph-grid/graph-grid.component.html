@@ -1,0 +1,6 @@
+<svg width="100%" height="100%" viewBox="0 0 800 640" xmlns="http://www.w3.org/2000/svg">
+  <g
+    *ngFor="let node of nodes$ | async"
+    app-graph-node [node]="node"
+  ></g>
+</svg>

@@ -1,0 +1,34 @@
+<svg:g #container>
+  <svg:rect x="0" y="0" [attr.width]="dimensions.width" [attr.height]="dimensions.headerHeight" fill="black" appDraggable [dragProxy]="container">
+  </svg:rect>
+  <svg:g>
+    <svg:rect x="0" y="10px" [attr.width]="dimensions.width" [attr.height]="dimensions.height" fill="yellow"></svg:rect>
+
+    <!-- input nodes -->
+    <svg:g
+      *ngFor="let name_socket of inputs; let i = index"
+
+      [attr.transform] = "getSocketTransform(i)"
+
+      app-graph-socket
+      [node]="node"
+      [name]="name_socket[0]"
+      [socket]="name_socket[1]"
+      >
+    </svg:g>
+
+    <!-- output nodes -->
+    <svg:g
+      *ngFor="let name_socket of outputs; let i = index"
+
+      [attr.transform] = "getSocketTransform(i, true)"
+
+      app-graph-socket
+      [node]="node"
+      [name]="name_socket[0]"
+      [socket]="name_socket[1]"
+      [isOutput]="true"
+      >
+    </svg:g>
+  </svg:g>
+</svg:g>
